@@ -6,6 +6,7 @@ Manager/
 Manager/**
 #Excluded
 !Materials/
+!Sources/**
 !Materials/**
 !index.html
 !style.css
