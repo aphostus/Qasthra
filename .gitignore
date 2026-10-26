@@ -1,0 +1,16 @@
+#Default
+*
+
+#Included
+Manager/
+Manager/**
+#Excluded
+!Materials/
+!Materials/**
+!index.html
+!style.css
+!script.js
+!.gitignore
+!Sources/
+!system.py
+!datahub.db
