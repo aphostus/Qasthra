@@ -1,6 +1,4 @@
 # Qasthra
-Developed by Gabriel Yoan L. Cortez and Aphostus. A 
-datahub based on the future technology of databases.
-where data is flexibly managed and engineered.
+The world's first global Computational Machineware Algorithm or CMA. Developed to revolutionize Hardware and Software.
 
 ---
