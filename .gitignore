@@ -15,3 +15,4 @@ Manager/**
 !Sources/
 !system.py
 !datahub.db
+!README.md
