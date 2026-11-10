@@ -10,7 +10,7 @@
   const camera = new THREE.PerspectiveCamera(45, 1, .1, 200);
   camera.position.set(0, 0, 34);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   host.appendChild(renderer.domElement);
   const root = new THREE.Group();
   scene.add(root);
@@ -25,7 +25,7 @@
   new ResizeObserver(resize).observe(host);
 
   // ---------- object: two helical columns, fully linked ----------
-  const N = 58;
+  const N = matchMedia('(pointer:coarse)').matches ? 46 : 58;
   const inPos = [], outPos = [];
   for (let i = 0; i < N; i++) {
     const a = i * 2.4, y = (1 - 2 * (i + .5) / N) * 9;
@@ -42,7 +42,6 @@
 
   const dummy = new THREE.Object3D();
   const linePos = new Float32Array(synCount * 6);
-  const synMid = [];
   let k = 0;
   for (let i = 0; i < N; i++) {
     for (let j = 0; j < N; j++, k++) {
@@ -83,11 +82,12 @@
     else { fg.set('#0a0a0a'); lineBase.set('#d4d4d8'); nodeBase.set('#8e8e94'); }
   }
   theme();
-  dark.addEventListener('change', theme);
-  window.addEventListener('themechange', theme);
+  dark.addEventListener('change', () => { theme(); lit.fill(1); });
+  window.addEventListener('themechange', () => { theme(); lit.fill(1); });
 
   // ---------- random animation state ----------
   const glowSyn = new Float32Array(synCount);
+  const lit = new Uint8Array(synCount).fill(1);
   const glowNode = new Float32Array(N * 2);
   const rnd = (a, b) => a + Math.random() * (b - a);
 
@@ -98,7 +98,7 @@
     const fan = 6 + ((Math.random() * 18) | 0);
     for (let n = 0; n < fan; n++) {
       const j = (Math.random() * N) | 0;
-      glowSyn[i * N + j] = 1;
+      glowSyn[i * N + j] = 1; lit[i * N + j] = 1;
       glowNode[N + j] = Math.max(glowNode[N + j], rnd(.5, 1));
     }
   }
@@ -173,6 +173,9 @@
 
   function frame(now) {
     requestAnimationFrame(frame);
+    if (!visible || document.hidden) { last = now; return; }
+    if (now - lastDraw < FRAME_MS) return;
+    lastDraw = now;
     const dt = Math.min((now - last) / 1000, .05);
     last = now;
     const m = reduce ? .15 : 1;
@@ -205,8 +208,9 @@
 
     // decay + write colours
     const decay = Math.exp(-dt * 2.4);
+    let changed = false;
     for (let i = 0; i < synCount; i++) {
-      const g = glowSyn[i] *= decay;
+      let g = glowSyn[i]; if (g < .004 && !lit[i]) continue; changed = true; g *= decay; if (g < .004) { g = 0; lit[i] = 0; } else lit[i] = 1; glowSyn[i] = g;
       tint.copy(lineBase).lerp(fg, g);
       const o = i * 6;
       lineCol[o] = lineCol[o + 3] = tint.r;
@@ -225,14 +229,17 @@
       dummy.updateMatrix();
       nodes.setMatrixAt(i, dummy.matrix);
     }
-    lineAttr.needsUpdate = true;
-    syns.instanceColor.needsUpdate = true;
+    if (changed) lineAttr.needsUpdate = true;
+    if (changed) syns.instanceColor.needsUpdate = true;
     nodes.instanceColor.needsUpdate = true;
     nodes.instanceMatrix.needsUpdate = true;
 
     renderer.render(scene, camera);
   }
 
+  let visible = true, lastDraw = 0;
+  const FRAME_MS = matchMedia('(pointer:coarse)').matches ? 28 : 0;
+  if ('IntersectionObserver' in window) new IntersectionObserver((en) => { visible = en[0].isIntersecting; }).observe(host);
   resize();
   requestAnimationFrame(frame);
 })();
@@ -269,31 +276,6 @@
   document.addEventListener('click', (e) => { if (!nav.contains(e.target)) set(false); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
   matchMedia('(min-width:561px)').addEventListener('change', () => set(false));
-})();
-
-(() => {
-  const nav = document.querySelector('.nav');
-})();
-
-// ---------- navbar: Dashboard/Showcase appear only while the hero ones are out of view ----------
-(() => {
-  const nav = document.querySelector('.nav');
-  const heroBtns = Array.from(document.querySelectorAll('.actions .btn')).filter((b) => /^(Dashboard|Showcase)$/.test(b.textContent.trim()));
-  if (!nav) return;
-  if (!heroBtns.length) return;
-  const inView = (el) => {
-    const r = el.getBoundingClientRect();
-    return r.bottom > nav.offsetHeight && r.top < window.innerHeight;
-  };
-  let queued = false;
-  const update = () => {
-    queued = false;
-    nav.classList.toggle('show-dash', !heroBtns.some(inView));
-  };
-  const queue = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
-  addEventListener('scroll', queue, { passive: true });
-  addEventListener('resize', queue);
-  update();
 })();
 
 // ---------- database (Supabase) ----------
@@ -358,4 +340,35 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
     // check button: no action yet
   }, true);
   addEventListener('resize', () => { if (open) fit(); });
+})();
+
+// ---------- contact & support views: same page, new render, top nav stays ----------
+(() => {
+  const page = document.getElementById('page');
+  const nav = document.querySelector('.nav');
+  const menu = document.getElementById('menuToggle');
+  if (!page || !nav) return;
+  const views = ['qa', 'info', 'ps', 'sandbox', 'showcase', 'contact', 'support'];
+  const triggers = Array.from(document.querySelectorAll('[data-view]'));
+  const render = () => {
+    const h = location.hash.slice(1);
+    const v = views.includes(h) ? h : '';
+    if (v) document.body.dataset.view = v; else delete document.body.dataset.view;
+    page.hidden = !v;
+    triggers.forEach((t) => t.classList.toggle('active', t.dataset.view === v));
+    nav.classList.remove('open');
+    if (menu) { menu.setAttribute('aria-expanded', 'false'); menu.setAttribute('aria-label', 'Open menu'); }
+    window.scrollTo(0, 0);
+    window.dispatchEvent(new Event('resize'));
+  };
+  triggers.forEach((t) => t.addEventListener('click', () => { location.hash = t.dataset.view === 'home' ? '' : t.dataset.view; }));
+  window.addEventListener('hashchange', render);
+  render();
+})();
+// ---------- nav showcase button: show only when hero showcase button is out of view ----------
+(() => {
+  const nb = document.querySelector('.nav-center');
+  const hb = document.getElementById('showBtn');
+  if (!nb || !hb || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver((en) => nb.classList.toggle('show', !en[0].isIntersecting)).observe(hb);
 })();
