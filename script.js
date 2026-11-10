@@ -299,10 +299,15 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
     label();
   };
   const fit = () => {
+    dash.style.transition = 'none';
     dash.style.width = ''; dash.style.marginRight = '';
+    void dash.offsetWidth;
     w0 = dash.getBoundingClientRect().width;
     const w1 = Math.max(w0, show.getBoundingClientRect().right - dash.getBoundingClientRect().left);
     dash.style.width = w0 + 'px';
+    dash.style.marginRight = '0px';
+    void dash.offsetWidth;
+    dash.style.transition = '';
     void dash.offsetWidth;
     dash.style.width = w1 + 'px';
     dash.style.marginRight = (w0 - w1) + 'px';
@@ -314,8 +319,8 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
   };
   const openIt = () => {
     if (open) return;
-    clearTimeout(t2); clearTimeout(t3);
-    savedLabel = tbtn.getAttribute('aria-label') || '';
+    clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); box.classList.remove('pick-on');
+    if (!box.classList.contains('dash-open')) savedLabel = tbtn.getAttribute('aria-label') || '';
     open = true;
     box.classList.add('dash-open');
     fit();
@@ -326,13 +331,13 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
   const close = () => {
     if (!open) return;
     open = false;
-    clearTimeout(t1);
+    clearTimeout(t1); clearTimeout(t2); clearTimeout(t3);
     box.classList.remove('pick-on');
     t2 = setTimeout(() => { dash.style.width = w0 + 'px'; dash.style.marginRight = '0px'; }, 180);
     t3 = setTimeout(() => { box.classList.remove('dash-open'); dash.style.width = ''; dash.style.marginRight = ''; label(); }, 560);
   };
   dash.addEventListener('click', openIt);
-  opts.forEach((o) => o.addEventListener('click', () => choice === o.dataset.v ? close() : setPick(o.dataset.v)));
+  opts.forEach((o) => o.addEventListener('click', () => { if (!open) return; if (choice === o.dataset.v) close(); else setPick(o.dataset.v); }));
   tbtn.addEventListener('click', (e) => {
     if (!open) return;
     e.stopImmediatePropagation();

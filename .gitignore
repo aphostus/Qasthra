@@ -16,3 +16,5 @@ Manager/**
 !system.py
 !datahub.db
 !README.md
+!Pages/
+!Pages/**
