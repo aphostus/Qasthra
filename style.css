@@ -267,3 +267,11 @@ body[data-view] .hero,body[data-view] .bento{display:none}
 /* ---------- nav showcase: appears after hero showcase is gone ---------- */
 .nav .nav-text.nav-center{visibility:hidden;opacity:0;pointer-events:none;transition:opacity .25s ease}
 .nav .nav-text.nav-center.show{visibility:visible;opacity:1;pointer-events:auto}
+/* ---------- view renders: gray centered header ---------- */
+.view-head{text-align:center;color:var(--gray);padding-top:clamp(32px,9vw,110px)}
+.view-head h2{color:var(--mono)}
+.view-head .sub{margin:16px auto 0;max-width:none;color:var(--gray);font-size:clamp(12px,3.6vw,17px)}
+/* ---------- mobile menu: About replaces Sandbox ---------- */
+.nav .btn-about{display:none}
+@media (max-width:560px){.nav .btn-about{display:inline-flex;align-items:center;justify-content:center}.nav .btn-nav[data-view="sandbox"]{display:none}}
+@media (min-width:561px) and (max-width:1023px) and (pointer:coarse){.nav .btn-about{display:inline-flex;align-items:center;justify-content:center}.nav .btn-nav[data-view="sandbox"]{display:none}}

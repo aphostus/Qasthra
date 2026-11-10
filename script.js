@@ -377,3 +377,5 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
   if (!nb || !hb || !('IntersectionObserver' in window)) return;
   new IntersectionObserver((en) => nb.classList.toggle('show', !en[0].isIntersecting)).observe(hb);
 })();
+// ---------- view renders: informations, contact, support ----------
+(() => { const box = document.querySelector('#page .page-in'); if (!box) return; const data = { info: { t: 'Informations', d: ['Everything about how Qasthra works.', 'Guides and references in one place.'] }, contact: { t: 'Contact', d: ['Questions, ideas and partnerships.', 'We reply as soon as we can.'] }, support: { t: 'Support', d: ['Help with your account and setup.', 'Tell us what went wrong.'] } }; const draw = () => { const x = data[location.hash.slice(1)]; if (!x) return; box.innerHTML = '<header class="view-head"><h2>' + x.t + '</h2><p class="sub">' + x.d[0] + '<br>' + x.d[1] + '</p></header>'; }; window.addEventListener('hashchange', draw); draw(); })();
