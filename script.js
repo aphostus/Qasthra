@@ -342,7 +342,7 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
     if (!open) return;
     e.stopImmediatePropagation();
     e.preventDefault();
-    // check button: no action yet
+    if(!choice){close();return;}var go=async()=>{if(!window.db){alert('Auth is not available. Check your connection.');return;}var d=location.origin+location.pathname.replace(/[^\/]*$/,'')+'Pages/dashboard/dashboard.html?v='+choice;try{var r=await window.db.auth.getSession();if(r.data&&r.data.session){location.href=d;return;}var o=await window.db.auth.signInWithOAuth({provider:choice,options:{redirectTo:d}});if(o.error)throw o.error;}catch(x){alert('Sign-in failed: '+(x.message||x));}};go();
   }, true);
   addEventListener('resize', () => { if (open) fit(); });
 })();
