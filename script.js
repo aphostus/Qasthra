@@ -286,6 +286,7 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
   const dash = document.getElementById('dashBtn');
   const show = document.getElementById('showBtn');
   const pick = document.getElementById('dashPick');
+  const info = document.getElementById('dashInfo');
   const tbtn = document.getElementById('themeToggle');
   if (!box || !dash || !show || !pick || !tbtn) return;
   const opts = Array.from(pick.querySelectorAll('.dash-opt'));
@@ -303,7 +304,8 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
     dash.style.width = ''; dash.style.marginRight = '';
     void dash.offsetWidth;
     w0 = dash.getBoundingClientRect().width;
-    const w1 = Math.max(w0, show.getBoundingClientRect().right - dash.getBoundingClientRect().left);
+    const sr = show.getBoundingClientRect().right, tl = tbtn.getBoundingClientRect().left, iw = info ? info.offsetWidth : 0, roomy = !!info && (tl - sr) >= iw + 16;
+    const w1 = Math.max(w0, sr - dash.getBoundingClientRect().left - (info && !roomy ? iw + 8 : 0));
     dash.style.width = w0 + 'px';
     dash.style.marginRight = '0px';
     void dash.offsetWidth;
@@ -316,6 +318,7 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
     pick.style.width = w1 + 'px';
     pick.style.height = dash.offsetHeight + 'px';
     pick.style.borderRadius = getComputedStyle(dash).borderRadius;
+    if (info) { info.style.left = (roomy ? show.offsetLeft + show.offsetWidth + (tbtn.offsetLeft - show.offsetLeft - show.offsetWidth - info.offsetWidth) / 2 : show.offsetLeft + show.offsetWidth - info.offsetWidth) + 'px'; info.style.top = (show.offsetTop + (show.offsetHeight - info.offsetHeight) / 2) + 'px'; }
   };
   const openIt = () => {
     if (open) return;
@@ -379,3 +382,5 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
 })();
 // ---------- view renders: informations, contact, support ----------
 (() => { const box = document.querySelector('#page .page-in'); if (!box) return; const data = { info: { t: 'Informations', d: ['Everything about how Qasthra works.', 'Guides and references in one place.'] }, contact: { t: 'Contact', d: ['Questions, ideas and partnerships.', 'We reply as soon as we can.'] }, support: { t: 'Support', d: ['Help with your account and setup.', 'Tell us what went wrong.'] } }; const draw = () => { const x = data[location.hash.slice(1)]; if (!x) return; box.innerHTML = '<header class="view-head"><h2>' + x.t + '</h2><p class="sub">' + x.d[0] + '<br>' + x.d[1] + '</p></header>'; }; window.addEventListener('hashchange', draw); draw(); })();
+// ---------- dashboard picker: hold (i) to read, release or move away to close ----------
+(() => { const info = document.getElementById('dashInfo'), tip = document.getElementById('dashTip'), box = document.querySelector('.actions'); if (!(info && tip && box)) return; const set = (on) => tip.classList.toggle('on', on); const end = () => set(false); info.addEventListener('pointerdown', (e) => { e.preventDefault(); set(true); try { info.setPointerCapture(e.pointerId); } catch (x) {} }); info.addEventListener('pointermove', (e) => { const r = info.getBoundingClientRect(); const d = Math.max(r.left - e.clientX, e.clientX - r.right, r.top - e.clientY, e.clientY - r.bottom); if (d > 8) end(); }); ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => info.addEventListener(t, end)); info.addEventListener('contextmenu', (e) => e.preventDefault()); new MutationObserver(() => { if (!box.classList.contains('pick-on')) end(); }).observe(box, { attributes: true, attributeFilter: ['class'] }); })();
