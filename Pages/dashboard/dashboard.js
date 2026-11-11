@@ -29,12 +29,8 @@
   const v = params.get('v') === 'notion' ? 'Notion' : 'GitHub';
   const set = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
 
-  set('userEmail', user.email || '');
-  set('who', user.email || 'to your dashboard');
-  set('provider', 'Provider: ' + v);
-  set('accProvider', v);
-  set('accEmail', user.email || user.id);
-  set('accSession', 'Signed in ' + new Date(user.last_sign_in_at || Date.now()).toLocaleString());
+  const name = user.email ? user.email.split('@')[0].split(/[.\d]/)[0] : '';
+  set('who', name || 'to your dashboard');
 
   // ---------- sign out ----------
   const out = document.getElementById('signOut');
