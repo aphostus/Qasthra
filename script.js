@@ -360,18 +360,17 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
   if (!page || !nav) return;
   const views = ['qa', 'info', 'ps', 'sandbox', 'showcase', 'contact', 'support'];
   const triggers = Array.from(document.querySelectorAll('[data-view]'));
-  const render = () => {
+  let pv = '', cur = '', swap; const popEl = document.getElementById('navPop'); const paint = () => { if (popEl) { popEl.classList.toggle('on', !!pv); popEl.setAttribute('aria-hidden', pv ? 'false' : 'true'); popEl.dataset.pv = pv; } triggers.forEach((t) => t.classList.toggle('active', t.dataset.view === pv || t.dataset.view === cur)); }; const setPop = (next) => { clearTimeout(swap); if (pv && next && next !== pv) { pv = ''; paint(); swap = setTimeout(() => { pv = next; paint(); }, 380); } else { pv = next; paint(); } }; const render = () => {
     const h = location.hash.slice(1);
-    const v = views.includes(h) ? h : '';
-    if (v) document.body.dataset.view = v; else delete document.body.dataset.view;
+    const v = (h === 'qa' || h === 'ps') ? '' : (views.includes(h) ? h : ''); cur = v; setPop(''); if (v) document.body.dataset.view = v; else delete document.body.dataset.view;
     page.hidden = !v;
-    triggers.forEach((t) => t.classList.toggle('active', t.dataset.view === v));
+    triggers.forEach((t) => t.classList.toggle('active', t.dataset.view === (pv || v)));
     nav.classList.remove('open');
     if (menu) { menu.setAttribute('aria-expanded', 'false'); menu.setAttribute('aria-label', 'Open menu'); }
     window.scrollTo(0, 0);
     window.dispatchEvent(new Event('resize'));
   };
-  triggers.forEach((t) => t.addEventListener('click', () => { location.hash = t.dataset.view; }));
+  triggers.forEach((t) => t.addEventListener('click', () => { const q = t.dataset.view === 'qa' || t.dataset.view === 'ps'; if (q) { setPop(pv === t.dataset.view ? '' : t.dataset.view); } else { setPop(''); location.hash = t.dataset.view; } }));
   window.addEventListener('hashchange', render);
   render();
 })();
