@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 440 455" width="440" height="455">
+
+  <defs>
+    <path id="neck" d="M165 245 C120 268 92 330 98 405 C150 418 218 388 240 330 L205 285 Z"/>
+    <path id="horn2" d="M236 142 C226 100 222 70 212 28 C250 40 290 80 300 150 Z"/>
+    <path id="jawLow" d="M205 280 C240 304 292 300 335 277 C355 266 376 262 384 268 C380 288 352 308 316 320 C275 332 235 326 212 298 Z"/>
+    <!-- head and back horn as ONE continuous shape (no seam) -->
+    <path id="head" d="M148 190 C100 150 80 96 78 38 C140 96 205 102 250 128 C290 130 306 150 332 165 C362 178 388 186 397 206 C404 224 392 242 372 246 C340 252 300 264 270 287 C240 302 190 292 160 270 C145 259 140 246 140 232 C140 218 143 204 148 190 Z"/>
+  </defs>
+
+  <!-- Heavy black outer outline around the whole silhouette -->
+  <g fill="#000000" stroke="#000000" stroke-width="30" stroke-linejoin="round" stroke-linecap="round">
+    <use xlink:href="#neck"/><use xlink:href="#horn2"/><use xlink:href="#jawLow"/><use xlink:href="#head"/>
+  </g>
+
+  <!-- Solid black parts separated by white edge lines -->
+  <g fill="#000000" stroke="#ffffff" stroke-width="8" stroke-linejoin="round" stroke-linecap="round">
+    <use xlink:href="#neck"/>
+    <use xlink:href="#horn2"/>
+    <use xlink:href="#jawLow"/>
+    <use xlink:href="#head"/>
+  </g>
+
+  <!-- Eye -->
+  <path d="M244 182 C262 168 292 171 306 190 C288 199 260 198 244 182 Z" fill="#ffffff"/>
+
+  <!-- Nostril -->
+  <path d="M364 202 C370 196 381 198 384 206 C377 212 368 211 364 202 Z" fill="#ffffff"/>
+</svg>
