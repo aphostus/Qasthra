@@ -42,5 +42,9 @@
   // ---------- leave if the session ends elsewhere ----------
   db.auth.onAuthStateChange((event, s) => { if (event === 'SIGNED_OUT' || !s) leave(); });
 
+  const stamp = () => { try { localStorage.setItem('qk_seen', String(Date.now())); } catch (e) {} };
+  stamp();
+  addEventListener('pagehide', stamp);
+  document.addEventListener('visibilitychange', stamp);
   show();
 })();

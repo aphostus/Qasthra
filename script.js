@@ -280,6 +280,7 @@
 })();
 
 // ---------- database (Supabase) ----------
+try { if (!localStorage.getItem('qk_purge1')) { Object.keys(localStorage).forEach((k) => { if (/^sb-.*-auth-token/.test(k) || k === 'supabase.auth.token') localStorage.removeItem(k); }); localStorage.setItem('qk_purge1', '1'); } } catch (x) {}
 window.db = (window.supabase && window.supabase.createClient) ? window.supabase.createClient('https://kidfwfzzoetisryjnnlh.supabase.co', 'sb_publishable_Dw-lSo7BWbtF-oihZt7QBA_i_2wV8Dn') : null;
 // ---------- dashboard picker (GitHub / Supabase) ----------
 (() => {
@@ -346,7 +347,7 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
     if (!open) return;
     e.stopImmediatePropagation();
     e.preventDefault();
-    if(!choice){close();return;}var go=async()=>{if(!window.db){alert('Auth is not available. Check your connection.');return;}var d=location.origin+location.pathname.replace(/[^\/]*$/,'')+'Pages/dashboard/dashboard.html?v='+choice;try{var r=await window.db.auth.getSession();if(r.data&&r.data.session){location.href=d;return;}var o=await window.db.auth.signInWithOAuth({provider:choice,options:{redirectTo:d}});if(o.error)throw o.error;}catch(x){alert('Sign-in failed: '+(x.message||x));}};go();
+    if(!choice){close();return;}var go=async()=>{if(!window.db){alert('Auth is not available. Check your connection.');return;}var d=location.origin+location.pathname.replace(/[^\/]*$/,'')+'Pages/dashboard/dashboard.html?v='+choice;try{var r=await window.db.auth.getSession();var ss=r.data&&r.data.session;if(ss&&window.qkLeft&&window.qkLeft(ss)<=0){try{await window.db.auth.signOut({scope:'local'});}catch(x){}ss=null;}if(ss){location.href=d;return;}var o=await window.db.auth.signInWithOAuth({provider:choice,options:{redirectTo:d,queryParams:choice==='github'?{prompt:'select_account'}:{}}});if(o.error)throw o.error;}catch(x){alert('Sign-in failed: '+(x.message||x));}};go();
   }, true);
   addEventListener('resize', () => { if (open) fit(); });
 })();
@@ -389,7 +390,103 @@ window.db = (window.supabase && window.supabase.createClient) ? window.supabase.
 (() => { const box = document.querySelector('#page .page-in'); if (!box) return; const BAD = /[<>{}\[\]()`$;\\|^~"]|--|\/\*|\*\/|&#|%3c|%3e|javascript:|\bor\s+1\s*=\s*1|\b(select|insert|update|delete|drop|union|alter|exec|script|truncate|onerror|onload)\b/i; const EMAIL = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/; const GH = /^https:\/\/github\.com\/[A-Za-z0-9_.\/-]{1,120}$/; const clean = (s) => String(s || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim(); const PH = { name: 'Your name', email: 'you@example.com', phone: '+63 900 000 0000', link: 'https://github.com/aphostus/Qasthra' }; const AC = { name: 'name', email: 'email', phone: 'tel' }; const inp = (n, l, t, m, req) => '<label class="cs-f"><span>' + l.replace(' *', ' <em>*</em>') + '</span><input name="' + n + '" type="' + t + '" maxlength="' + m + '" autocomplete="' + (AC[n] || 'off') + '" placeholder="' + (PH[n] || '') + '"' + (t === 'tel' ? ' inputmode="tel"' : '') + (req ? ' required' : '') + '></label>'; const area = '<label class="cs-f"><span>Message <em>*</em></span><textarea name="message" rows="5" maxlength="1000" placeholder="Write your message here" required></textarea></label>'; const hp = '<div class="cs-hp" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off"></div>'; const tail = '<button class="btn btn-mono cs-send" type="submit">Send message</button><p class="cs-note" role="status" aria-live="polite"></p></form></div>'; const HTML = { contact: '<div class="cs"><div class="cs-info"><div class="cs-card"><i class="cs-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></i><div class="cs-txt"><b>Email</b><a href="mailto:Qasthra@gmail.com">Qasthra@gmail.com</a></div><button class="cs-copy" type="button" data-copy="Qasthra@gmail.com">Copy</button></div><div class="cs-card"><i class="cs-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></i><div class="cs-txt"><b>Phone</b><a href="tel:+639245266251">+63 924 526 6251</a></div><button class="cs-copy" type="button" data-copy="+63 924 526 6251">Copy</button></div></div><form class="cs-form" novalidate data-v="contact"><h3 class="cs-title">Send us a message</h3><p class="cs-hint">Fields marked * are required.</p>' + inp('name', 'Name *', 'text', 60, 1) + '<div class="cs-row">' + inp('email', 'Email *', 'email', 120, 1) + inp('phone', 'Phone *', 'tel', 30, 1) + '</div>' + area + hp + tail, support: '<div class="cs"><div class="cs-info"><div class="cs-card"><i class="cs-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.34.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg></i><div class="cs-txt"><b>GitHub</b><a class="cs-stretch" href="https://github.com/aphostus/Qasthra" target="_blank" rel="noopener noreferrer">github.com/aphostus/Qasthra</a></div></div><div class="cs-card"><i class="cs-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></i><div class="cs-txt"><b>Help us improve</b><span>Suggest features, report bugs or share code.</span></div></div></div><form class="cs-form" novalidate data-v="support"><h3 class="cs-title">Share your idea</h3><p class="cs-hint">Fields marked * are required.</p><div class="cs-row">' + inp('name', 'Name *', 'text', 60, 1) + inp('email', 'Email', 'email', 120, 0) + '</div><div class="cs-row">' + inp('phone', 'Phone', 'tel', 30, 0) + '<label class="cs-f"><span>Type</span><select name="kind"><option value="Suggestion">Suggestion</option><option value="Feature request">Feature request</option><option value="Bug report">Bug report</option><option value="Code contribution">Code contribution</option><option value="Performance issue">Performance issue</option><option value="Security concern">Security concern</option><option value="Design feedback">Design feedback</option><option value="Documentation">Documentation</option><option value="Integration request">Integration request</option><option value="Partnership">Partnership</option><option value="Question">Question</option><option value="Other">Other</option></select></label></div>' + inp('link', 'GitHub', 'url', 200, 0) + area + hp + tail }; const draw = () => { const h = location.hash.slice(1); if (!HTML[h] || box.querySelector('.cs')) return; box.insertAdjacentHTML('beforeend', HTML[h]); }; window.addEventListener('hashchange', draw); draw(); box.addEventListener('submit', async (e) => { const f = e.target.closest('form.cs-form'); if (!f) return; e.preventDefault(); const note = f.querySelector('.cs-note'), btn = f.querySelector('button'); const say = (t, ok) => { note.textContent = t; note.dataset.ok = ok ? '1' : '0'; }; const v = f.dataset.v, d = new FormData(f); if (d.get('website')) { say('Thanks!', 1); f.reset(); return; } const row = {}; for (const k of ['name', 'email', 'phone', 'kind', 'link', 'message']) { if (!d.has(k)) continue; const x = clean(d.get(k)); if (x && BAD.test(x)) { say('Please remove brackets, quotes and code symbols, then try again.', 0); return; } row[k] = x || null; } if (!row.message || row.message.length < 5) { say('Please write a message of at least 5 characters.', 0); return; } if (!row.name) { say('Please enter your name.', 0); return; } if (v === 'contact' && !row.phone) { say('Please enter your phone number.', 0); return; } if ((v === 'contact' || row.email) && !EMAIL.test(row.email || '')) { say('Please enter a valid email address.', 0); return; } if (row.link && !GH.test(row.link)) { say('Link must start with https://github.com/', 0); return; } if (row.phone && !/^\+?[0-9][0-9 -]{5,18}[0-9]$/.test(row.phone)) { say('Please enter a valid phone number.', 0); return; } try { if (Date.now() - Number(localStorage.getItem('cs_last') || 0) < 30000) { say('Please wait a moment before sending again.', 0); return; } } catch (x) {} if (!window.db) { say('Connection unavailable. Please try again later.', 0); return; } btn.disabled = true; try { const r = await window.db.from(v === 'contact' ? 'contact_messages' : 'support_suggestions').insert([row]); if (r.error) throw r.error; try { localStorage.setItem('cs_last', String(Date.now())); } catch (x) {} f.reset(); say('Sent. Thank you!', 1); } catch (x) { say('Could not send. Please try again later.', 0); } btn.disabled = false; }); })();
 // ---------- contact & support: copy buttons ---------- (() => { const box = document.querySelector('#page .page-in'); if (!box) return; box.addEventListener('click', (e) => { const b = e.target.closest('.cs-copy'); if (!b) return; const t = b.dataset.copy; const done = () => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy'; }, 1500); }; const fb = () => { const x = document.createElement('textarea'); x.value = t; x.style.position = 'fixed'; x.style.opacity = '0'; document.body.appendChild(x); x.select(); try { document.execCommand('copy'); done(); } catch (z) {} x.remove(); }; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, fb); else fb(); }); })();
 // ---------- subscribe popup: GitHub / Notion quick access ----------
-(() => { const btn = document.getElementById('subBtn'), pop = document.getElementById('subPop'); if (!(btn && pop)) return; const f = pop.querySelector('form'), note = pop.querySelector('.sub-note'), hl = document.getElementById('subHL'), hin = f.elements.handle, segs = pop.querySelectorAll('.sub-seg button'); let prov = 'github'; const GH = /^[A-Za-z0-9-]{1,39}$/, NO = /^(https:[/][/]([a-z0-9-]+[.])?notion[.](so|site)[/][A-Za-z0-9_./-]{0,120}|[^ @]+@[^ @]+[.][^ @]+)$/, EM = /^[^ @]+@[^ @]+[.][^ @]+$/, BAD = /[<>{}`$;|^~"]|--|javascript:/i; const clean = (s) => String(s || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim(); const say = (t, ok) => { note.textContent = t; note.dataset.ok = ok ? '1' : '0'; }; const setProv = (p) => { prov = p; segs.forEach((s) => s.classList.toggle('on', s.dataset.p === p)); hl.textContent = p === 'github' ? 'GitHub username' : 'Notion email or page link'; hin.placeholder = p === 'github' ? 'aphostus' : 'you@example.com'; }; segs.forEach((s) => s.addEventListener('click', () => setProv(s.dataset.p)));
-const fill = async () => { try { if (!window.db) return; const r = await window.db.auth.getSession(); const u = r.data && r.data.session && r.data.session.user; if (!u) return; const m = u.user_metadata || {}, p = (u.app_metadata && u.app_metadata.provider) || ''; if (p === 'notion') { setProv('notion'); if (!hin.value) hin.value = u.email || ''; } else { setProv('github'); if (!hin.value) hin.value = m.user_name || m.preferred_username || ''; } if (!f.elements.email.value && u.email) f.elements.email.value = u.email; if (!f.elements.phone.value && u.phone) f.elements.phone.value = u.phone; } catch (x) {} };
-const set = (on) => { pop.classList.toggle('on', on); pop.setAttribute('aria-hidden', on ? 'false' : 'true'); btn.setAttribute('aria-expanded', on ? 'true' : 'false'); if (on) { say('', 1); fill(); setTimeout(() => hin.focus({ preventScroll: true }), 60); } }; btn.addEventListener('click', (e) => { e.stopPropagation(); set(!pop.classList.contains('on')); }); pop.addEventListener('click', (e) => e.stopPropagation()); document.addEventListener('click', () => set(false)); document.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
-f.addEventListener('submit', async (e) => { e.preventDefault(); if (f.elements.website.value) { say('Thanks!', 1); return; } const handle = clean(hin.value), email = clean(f.elements.email.value), phone = clean(f.elements.phone.value); if (!handle || BAD.test(handle) || !(prov === 'github' ? GH.test(handle) : NO.test(handle))) { say(prov === 'github' ? 'Enter a valid GitHub username.' : 'Enter a Notion email or notion.so link.', 0); return; } if (email && (BAD.test(email) || !EM.test(email))) { say('Please enter a valid email address.', 0); return; } if (phone && !/^[+]?[0-9][0-9 -]{5,18}[0-9]$/.test(phone)) { say('Please enter a valid phone number.', 0); return; } try { if (Date.now() - Number(localStorage.getItem('sub_last') || 0) < 30000) { say('Please wait a moment before trying again.', 0); return; } } catch (x) {} if (!window.db) { say('Connection unavailable. Please try again later.', 0); return; } const go = f.querySelector('.sub-go'); go.disabled = true; try { const r = await window.db.from('subscribers').insert([{ provider: prov, handle: handle, email: email || null, phone: phone || null }]); if (r.error && r.error.code !== '23505') throw r.error; try { localStorage.setItem('sub_last', String(Date.now())); } catch (x) {} say(r.error ? 'You are already subscribed.' : 'Subscribed. Thank you!', 1); btn.textContent = 'Subscribed'; setTimeout(() => set(false), 1400); } catch (x) { say('Could not subscribe. Please try again later.', 0); } go.disabled = false; }); })();
+(() => { const btn = document.getElementById('subBtn'), pop = document.getElementById('subPop'); if (!(btn && pop)) return; const f = pop.querySelector('form'), note = pop.querySelector('.sub-note'), hl = document.getElementById('subHL'), hin = f.elements.handle, segs = pop.querySelectorAll('.sub-seg button'); let prov = 'github'; const GH = /^[A-Za-z0-9-]{1,39}$/, NO = /^(https:[/][/]([a-z0-9-]+[.])?notion[.](so|site)[/][A-Za-z0-9_./-]{0,120}|https:[/][/]([a-z0-9-]+[.])?notion[.]com[/][A-Za-z0-9_./-]{0,120})$/, EM = /^[^ @]+@[^ @]+[.][^ @]+$/, BAD = /[<>{}`$;|^~"]|--|javascript:/i; const clean = (s) => String(s || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim(); const say = (t, ok) => { note.textContent = t; note.dataset.ok = ok ? '1' : '0'; }; const setProv = (p) => { prov = p; segs.forEach((s) => s.classList.toggle('on', s.dataset.p === p)); hl.textContent = p === 'github' ? 'GitHub username' : 'Notion page link'; hin.placeholder = p === 'github' ? 'aphostus' : 'https://www.notion.so/your-page'; }; segs.forEach((s) => s.addEventListener('click', () => setProv(s.dataset.p)));
+const fill = async () => { try { if (!window.db) return; const r = await window.db.auth.getSession(); const u = r.data && r.data.session && r.data.session.user; if (!u) return; const m = u.user_metadata || {}, p = (u.app_metadata && u.app_metadata.provider) || ''; if (p === 'notion') { setProv('notion'); hin.value = hin.value || ''; } else { setProv('github'); if (!hin.value) hin.value = m.user_name || m.preferred_username || ''; } if (!f.elements.email.value && u.email) f.elements.email.value = u.email; if (!f.elements.phone.value && u.phone) f.elements.phone.value = u.phone; } catch (x) {} };
+const set = (on) => { pop.classList.toggle('on', on); pop.setAttribute('aria-hidden', on ? 'false' : 'true'); btn.setAttribute('aria-expanded', on ? 'true' : 'false'); if (on) btn.setAttribute('aria-label', 'Close'); else btn.removeAttribute('aria-label'); if (on) { say('', 1); fill(); setTimeout(() => hin.focus({ preventScroll: true }), 60); } }; btn.addEventListener('click', (e) => { e.stopPropagation(); set(!pop.classList.contains('on')); }); pop.addEventListener('click', (e) => e.stopPropagation()); document.addEventListener('click', () => set(false)); document.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
+f.addEventListener('submit', async (e) => { e.preventDefault(); if (f.elements.website.value) { say('Thanks!', 1); return; } const handle = clean(hin.value), email = clean(f.elements.email.value), phone = clean(f.elements.phone.value); if (!handle || BAD.test(handle) || !(prov === 'github' ? GH.test(handle) : NO.test(handle))) { say(prov === 'github' ? 'Enter a valid GitHub username.' : 'Enter a valid Notion page link.', 0); return; } if (email && (BAD.test(email) || !EM.test(email))) { say('Please enter a valid email address.', 0); return; } if (phone && !/^[+]?[0-9][0-9 -]{5,18}[0-9]$/.test(phone)) { say('Please enter a valid phone number.', 0); return; } try { if (Date.now() - Number(localStorage.getItem('sub_last') || 0) < 30000) { say('Please wait a moment before trying again.', 0); return; } } catch (x) {} if (!window.db) { say('Connection unavailable. Please try again later.', 0); return; } const go = f.querySelector('.sub-go'); go.disabled = true; try { const r = await window.db.from('subscribers').insert([{ provider: prov, handle: handle, email: email || null, phone: phone || null }]); if (r.error && r.error.code !== '23505') throw r.error; try { localStorage.setItem('sub_last', String(Date.now())); } catch (x) {} say(r.error ? 'You are already subscribed.' : 'Subscribed. Thank you!', 1); btn.querySelector('.sub-lbl').textContent = 'Subscribed'; setTimeout(() => set(false), 1400); } catch (x) { say('Could not subscribe. Please try again later.', 0); } go.disabled = false; }); })();
+
+// ---------- quick login: 30 s one-tap dashboard ----------
+(() => {
+  const dash = document.getElementById('dashBtn');
+  if (!dash || !window.db) return;
+  const TTL = 30000;
+  const qkAt = (x) => { let s = 0; try { s = Number(localStorage.getItem('qk_seen')) || 0; } catch (e) {} return Math.max(Date.parse(x) || 0, s); };
+  let tm = null, raf = 0, prov = '', until = 0;
+  const off = () => { if (window.__qkPrev) return; clearTimeout(tm); tm = null; prov = ''; until = 0; cancelAnimationFrame(raf); dash.classList.remove('qk'); dash.style.removeProperty('--qp'); };
+  const check = async () => {
+    try {
+      const r = await window.db.auth.getSession();
+      const s = r.data && r.data.session;
+      if (!s) { off(); return; }
+      const at = qkAt(s.user.last_sign_in_at || '');
+      if (isNaN(at)) { off(); return; }
+      const used = Math.round(Math.min(TTL, Math.max(0, Date.now() - at)));
+      const left = TTL - used;
+      if (left <= 0) { off(); try { localStorage.removeItem('qk_seen'); } catch (e) {} await window.db.auth.signOut({ scope: 'local' }); return; }
+      const p = (s.user.app_metadata && s.user.app_metadata.provider) || '';
+      prov = /^(github|notion)$/.test(p) ? p : 'github';
+      until = Date.now() + left;
+      clearTimeout(tm);
+      dash.classList.remove('qk');
+      void dash.offsetWidth;
+      dash.classList.add('qk');
+      const t0 = Date.now() - used;
+      cancelAnimationFrame(raf);
+      const tick = () => { const k = Math.max(0, 1 - (Date.now() - t0) / TTL); dash.style.setProperty('--qp', window.qkDeg(dash, k)); if (k > 0) raf = requestAnimationFrame(tick); else check(); };
+      tick();
+      tm = setTimeout(check, left + 60);
+    } catch (x) {}
+  };
+  dash.parentNode.addEventListener('click', (e) => {
+    if (!prov || !e.target.closest('#dashBtn')) return;
+    if (Date.now() >= until) { check(); return; }
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    location.href = location.origin + location.pathname.replace(/[^\/]*$/, '') + 'Pages/dashboard/dashboard.html?v=' + prov;
+  }, true);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+  addEventListener('pageshow', check);
+  window.db.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_IN' || ev === 'SIGNED_OUT') setTimeout(check, 0); });
+  check();
+})();
+
+
+// ---------- quick login: ring preview (?qk=1) ----------
+(() => {
+  if (!/[?&]qk=1/.test(location.search)) return;
+  setTimeout(() => {
+    const d = document.getElementById('dashBtn');
+    if (!d) return;
+    const t0 = Date.now();
+    window.__qkPrev = 1; d.classList.add('qk');
+    const tick = () => { const k = Math.max(0, 1 - (Date.now() - t0) / 30000); d.style.setProperty('--qp', window.qkDeg(d, k)); if (k > 0) requestAnimationFrame(tick); else { window.__qkPrev = 0; d.classList.remove('qk'); } };
+    tick();
+  }, 1500);
+})();
+
+// ---------- subscribe: auto format ----------
+(() => {
+  const pop = document.getElementById('subPop');
+  const f = pop && pop.querySelector('form');
+  if (!f) return;
+  const prov = () => { const b = pop.querySelector('.sub-seg button.on'); return b ? b.dataset.p : 'github'; };
+  const fmt = {
+    handle: (v) => {
+      v = v.replace(/\s+/g, ' ').trim();
+      if (!v) return v;
+      if (prov() === 'github') return v.replace(/^https?:\/\/(www\.)?github\.com\//i, '').replace(/^@+/, '').replace(/[\/?#].*$/, '');
+      v = v.replace(/^http:\/\//i, 'https://');
+      if (!/^https:\/\//i.test(v)) v = 'https://' + v.replace(/^\/+/, '');
+      return v.replace(/[?#].*$/, '');
+    },
+    email: (v) => v.replace(/\s+/g, '').toLowerCase(),
+    phone: (v) => {
+      v = v.replace(/\s+/g, ' ').trim();
+      const p = v.replace(/\D/g, '');
+      const m = /^(?:0|63)?(9\d{9})$/.exec(p);
+      if (!m || (v[0] === '+' && p.slice(0, 2) !== '63')) return v;
+      return '+63 ' + m[1].slice(0, 3) + ' ' + m[1].slice(3, 6) + ' ' + m[1].slice(6);
+    }
+  };
+  const run = () => {
+    const h = f.elements.handle, e = f.elements.email, p = f.elements.phone;
+    if (h.value) h.value = fmt.handle(h.value);
+    if (e.value) e.value = fmt.email(e.value);
+    if (p.value) p.value = fmt.phone(p.value);
+  };
+  f.addEventListener('focusout', (e) => { if (e.target.tagName === 'INPUT') run(); });
+  pop.addEventListener('submit', run, true);
+})();
+
+(() => { if (!/[?&]qk=1/.test(location.search)) return; setTimeout(() => { const d = document.getElementById('dashBtn'); if (!d) return; const a = getComputedStyle(d, '::after'); const ss = Array.from(document.querySelectorAll('link[rel=stylesheet],script[src]')).map((n) => (n.href || n.src).split('/').pop()).filter((x) => /style|script/.test(x)).join(' '); const rows = ['files: ' + ss, 'db: ' + (window.db ? 'ok' : 'NULL'), 'class qk: ' + d.classList.contains('qk'), '--qp: ' + d.style.getPropertyValue('--qp'), 'after content: ' + a.content, 'after position: ' + a.position + ' ' + a.width + ' x ' + a.height, 'after bg: ' + String(a.backgroundImage).slice(0, 70), 'after mask: ' + String(a.webkitMaskImage || a.maskImage).slice(0, 40), 'supports conic: ' + CSS.supports('background', 'conic-gradient(red 50%, transparent 0)'), 'supports color-mix: ' + CSS.supports('color', 'color-mix(in srgb, red 50%, transparent)'), 'supports mask-composite: ' + (CSS.supports('mask-composite', 'exclude') || CSS.supports('-webkit-mask-composite', 'xor'))]; const o = document.createElement('pre'); o.textContent = rows.join(String.fromCharCode(10)); o.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;margin:0;padding:10px;background:#000;color:#0f0;font:11px/1.4 monospace;white-space:pre-wrap;word-break:break-all;border-radius:8px'; o.onclick = () => o.remove(); document.body.appendChild(o); }, 2500); })();
+window.qkDeg = (el, k) => { const w = el.offsetWidth, h = el.offsetHeight, P = 2 * (w + h); let s = Math.max(0, Math.min(1, k)) * P, x, y; if (s <= w / 2) { x = s; y = -h / 2; } else if ((s -= w / 2) <= h) { x = w / 2; y = -h / 2 + s; } else if ((s -= h) <= w) { x = w / 2 - s; y = h / 2; } else if ((s -= w) <= h) { x = -w / 2; y = h / 2 - s; } else { s -= h; x = -w / 2 + s; y = -h / 2; } let deg = Math.atan2(x, -y) * 180 / Math.PI; if (deg < 0) deg += 360; if (k >= 1) deg = 360; return deg.toFixed(2) + 'deg'; }; window.qkLeft = (s) => { let seen = 0; try { seen = Number(localStorage.getItem('qk_seen')) || 0; } catch (e) {} const at = Math.max(Date.parse((s.user && s.user.last_sign_in_at) || '') || 0, seen); return 30000 - Math.min(30000, Math.max(0, Date.now() - at)); };
