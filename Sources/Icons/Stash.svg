@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="212 212 600 600" width="1000" height="1000" role="img" aria-label="Stash">
+  <title>Stash</title>
+  <defs>
+    <!-- slab geometry (layer 1 position) -->
+    <polygon id="top" points="512,238 792,378 512,518 232,378"/>
+    <polygon id="inner" points="512,250 770,378 512,506 254,378"/>
+    <polygon id="left" points="232,378 512,518 512,562 232,422"/>
+    <polygon id="right" points="512,518 792,378 792,422 512,562"/>
+    <polyline id="rimBack" points="232,378 512,238 792,378"/>
+    <polyline id="rimFront" points="232,378 512,518 792,378"/>
+
+    <!-- brushed steel: banded reflections across the side faces -->
+    <linearGradient id="steelL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f1f2f4"/>
+      <stop offset="0.16" stop-color="#9a9da2"/>
+      <stop offset="0.32" stop-color="#f6f7f8"/>
+      <stop offset="0.52" stop-color="#868990"/>
+      <stop offset="0.78" stop-color="#c6c8cc"/>
+      <stop offset="1" stop-color="#6c6f75"/>
+    </linearGradient>
+    <linearGradient id="steelR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#b9bcc0"/>
+      <stop offset="0.22" stop-color="#686b71"/>
+      <stop offset="0.44" stop-color="#b0b3b8"/>
+      <stop offset="0.72" stop-color="#4f5258"/>
+      <stop offset="1" stop-color="#868990"/>
+    </linearGradient>
+    <!-- soft vertical falloff so each steel edge feels rounded -->
+    <linearGradient id="edgeShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.35"/>
+      <stop offset="0.45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0.3"/>
+    </linearGradient>
+
+    <!-- polished bevel around the glass -->
+    <linearGradient id="bevel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.5" stop-color="#c9cbcf"/>
+      <stop offset="1" stop-color="#8b8e94"/>
+    </linearGradient>
+
+    <!-- glass: bright sky half over a darker horizon half, with a hard reflection line -->
+    <linearGradient id="glass" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.46" stop-color="#e2e4e7"/>
+      <stop offset="0.5" stop-color="#b4b7bc"/>
+      <stop offset="1" stop-color="#6f7278"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.7"/>
+      <stop offset="0.35" stop-color="#fff" stop-opacity="0.12"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="glint" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+  </defs>
+
+  <g stroke-linejoin="round">
+    <!-- Layer 5 (bottom) -->
+    <g transform="translate(0,224)">
+      <use xlink:href="#left" fill="url(#steelL)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#right" fill="url(#steelR)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#top" fill="url(#bevel)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#inner" fill="url(#glass)"/>
+      <use xlink:href="#left" fill="url(#edgeShade)"/>
+      <use xlink:href="#right" fill="url(#edgeShade)"/>
+      <use xlink:href="#left" fill="#000" fill-opacity="0.78"/>
+      <use xlink:href="#right" fill="#000" fill-opacity="0.82"/>
+      <use xlink:href="#top" fill="#000" fill-opacity="0.8"/>
+      <use xlink:href="#inner" fill="url(#gloss)" opacity="0.35"/>
+      <use xlink:href="#rimFront" fill="none" stroke="#fff" stroke-opacity="0.4" stroke-width="1.6"/>
+      <use xlink:href="#rimBack" fill="none" stroke="#fff" stroke-opacity="0.45" stroke-width="1.6"/>
+    </g>
+    <!-- Layer 4 -->
+    <g transform="translate(0,168)">
+      <use xlink:href="#left" fill="url(#steelL)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#right" fill="url(#steelR)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#top" fill="url(#bevel)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#inner" fill="url(#glass)"/>
+      <use xlink:href="#left" fill="url(#edgeShade)"/>
+      <use xlink:href="#right" fill="url(#edgeShade)"/>
+      <use xlink:href="#left" fill="#000" fill-opacity="0.6"/>
+      <use xlink:href="#right" fill="#000" fill-opacity="0.66"/>
+      <use xlink:href="#top" fill="#000" fill-opacity="0.62"/>
+      <use xlink:href="#inner" fill="url(#gloss)" opacity="0.5"/>
+      <use xlink:href="#rimFront" fill="none" stroke="#fff" stroke-opacity="0.5" stroke-width="1.6"/>
+      <use xlink:href="#rimBack" fill="none" stroke="#fff" stroke-opacity="0.55" stroke-width="1.6"/>
+    </g>
+    <!-- Layer 3 -->
+    <g transform="translate(0,112)">
+      <use xlink:href="#left" fill="url(#steelL)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#right" fill="url(#steelR)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#top" fill="url(#bevel)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#inner" fill="url(#glass)"/>
+      <use xlink:href="#left" fill="url(#edgeShade)"/>
+      <use xlink:href="#right" fill="url(#edgeShade)"/>
+      <use xlink:href="#left" fill="#000" fill-opacity="0.42"/>
+      <use xlink:href="#right" fill="#000" fill-opacity="0.48"/>
+      <use xlink:href="#top" fill="#000" fill-opacity="0.44"/>
+      <use xlink:href="#inner" fill="url(#gloss)" opacity="0.65"/>
+      <use xlink:href="#rimFront" fill="none" stroke="#fff" stroke-opacity="0.6" stroke-width="1.6"/>
+      <use xlink:href="#rimBack" fill="none" stroke="#fff" stroke-opacity="0.65" stroke-width="1.6"/>
+    </g>
+    <!-- Layer 2 -->
+    <g transform="translate(0,56)">
+      <use xlink:href="#left" fill="url(#steelL)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#right" fill="url(#steelR)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#top" fill="url(#bevel)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#inner" fill="url(#glass)"/>
+      <use xlink:href="#left" fill="url(#edgeShade)"/>
+      <use xlink:href="#right" fill="url(#edgeShade)"/>
+      <use xlink:href="#left" fill="#000" fill-opacity="0.22"/>
+      <use xlink:href="#right" fill="#000" fill-opacity="0.28"/>
+      <use xlink:href="#top" fill="#000" fill-opacity="0.2"/>
+      <use xlink:href="#inner" fill="url(#gloss)" opacity="0.85"/>
+      <use xlink:href="#rimFront" fill="none" stroke="#fff" stroke-opacity="0.75" stroke-width="1.8"/>
+      <use xlink:href="#rimBack" fill="none" stroke="#fff" stroke-opacity="0.8" stroke-width="1.8"/>
+    </g>
+    <!-- Layer 1 (top) -->
+    <g>
+      <use xlink:href="#left" fill="url(#steelL)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#right" fill="url(#steelR)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#top" fill="url(#bevel)" stroke="#d3d5d8" stroke-width="1.2"/>
+      <use xlink:href="#inner" fill="url(#glass)"/>
+      <use xlink:href="#left" fill="url(#edgeShade)"/>
+      <use xlink:href="#right" fill="url(#edgeShade)"/>
+      <use xlink:href="#inner" fill="url(#gloss)"/>
+      <use xlink:href="#rimFront" fill="none" stroke="#fff" stroke-opacity="0.95" stroke-width="2"/>
+      <use xlink:href="#rimBack" fill="none" stroke="#fff" stroke-opacity="0.95" stroke-width="2"/>
+      <!-- crisp glass glint -->
+      <path d="M 372,340 Q 450,296 556,292 Q 470,334 392,372 Z" fill="url(#glint)" stroke="none" filter="url(#soft)"/>
+    </g>
+  </g>
+</svg>
